@@ -1,0 +1,445 @@
+Preprocessor Directives:
+#define: Used to define a macro
+#undef : Used to undefine a macro
+#include: used to include a file in scource code program
+#if    : Used to check if a condition is true at compile time 
+#ifdef : Returns true if a macro is defined 
+#ifndef: Returns true if a macro is not defined 
+#pragma: Issues special commands to compiler using standard methods
+
+fprintf --> Used to print formatted output to a specific file stream.
+sprintf --> Used to print formatted output to a string.
+
+Pragma:
+-#pragma allows us to provide some additional information or instructions to the compiler.
+-It's compiler specific.
+-These directives helps us to specify some functions that are to be executed before the program starts.
+example:
+#pragma startup function_name --> Not supported for gcc compiler for vscode we have __attribute((construtor)) function_name();
+#pragma exit function_name    --> Not supported for gcc compiler for vscode we have __attribute((destructor)) function_name();
+#pragma warning: This is used to hide or display the compiler warnings which are displayed during compilation.
+#pragma once : Ensures a header file is included only once during the compilation
+
+Note: Since pragma is compiler specific, code using pragma may not be portable accross different compilers
+
+
+
+Macros:
+Macros are a feature of Preprocessor that allows you to define reusable piece of code or constant .
+example:
+#include <stdio.h>
+
+#define CONCAT(a, b) a##b
+
+int main() {
+    printf("%d\n", CONCAT(10, 20));  //1020
+    return 0;
+}
+
+
+
+Typedef:
+Typedef in c/c++ is used to create an alias/new_name for an existing data type.
+This makes the code more readable, easier to maintain and can simplify complex declarations.
+example:
+typedef struct
+{
+    int x;
+    int y;
+}POINT;
+
+POINT p;
+p.x = 1;
+p.y = 2;
+
+
+
+Datatypes in C:
+
+Primitive Datatypes: These Datatypes are one of the most common Datatypes that are used for representing common/simple values such as Example: integer, charecter, float.
+
+User-defined Datatypes: These Datatypes are defined by the user itself for his purpose.
+example: Function, Array and Pointer
+
+Derived Datatypes: These Datatypes that are Derived from Primitive and built in Datatypes are called Derived Datatypes.
+example: Class, Structure and Union
+
+
+
+Storage Classes in C:
+________________________
+|    STACK             |  --> AUTO (WITHIN BLOCK)
+|----------------------|
+|                      |  --> STATIC(Within Block, Within file for static global)
+|    DATA SEGMENT      |  --> EXTERN(Global Multiple Files)
+|----------------------|  
+|                      |
+|    CPU REGISTER      |  -->REGISTER (Within the Block)
+|______________________|
+
+STACK:
+
+-->Auto variables:
+They can be only accessed within the block/function they have been declared and not outside them (which defines their scope). 
+However, they can be accessed outside their scope as well using the concept of pointers given here by pointing to the very exact memory location where the variables reside.
+They are assigned a garbage value by default whenever they are declared.  
+
+
+Data SEGMENT:
+
+-->STATIC variables:
+Static variables have the property of preserving their value even after they are out of their scope! Hence, static variables preserve the value of their last use in their scope. So we can say that they are initialized only once and exist till the termination of the program. Thus, no new memory is allocated because they are not re-declared.
+Their scope is local to the function to which they were defined. 
+Global static variables--> can be accessed anywhere in the program. By default, they are assigned the value 0 by the compiler. 
+Local Static --> Cannot be accessed outside the function.
+
+
+-->EXTERN variables:
+Extern storage class simply tells us that the variable is defined elsewhere and not within the same block where it is used. Basically, the value is assigned to it in a different block and this can be overwritten/changed in a different block as well. So an extern variable is nothing but a global variable initialized with a legal value where it is declared in order to be used elsewhere. It can be accessed within any function/block.
+This basically signifies that we are not initializing a new variable but instead, we are using/accessing the global variable only. The main purpose of using extern variables is that they can be accessed between two different files .
+
+
+
+REGISTER:
+This storage class declares register variables that have the same functionality as that of the auto variables. 
+The only difference is that the compiler tries to store these variables in the register of the microprocessor if a free register is available. 
+This makes the use of register variables to be much faster than that of the variables stored in the memory during the runtime of the program.
+
+
+
+NOTE:
+For extern keyword the compiler believes that whatever the extrn variable said is true "go outside the function and u will find my defination" and produces no error... LINKER throws an error when it finds no such variable exists.
+
+
+
+Volatile Keyword:
+The volatile keyword in c is used to inform the compiler that a variable's value may change at anytime without the action been taken by the code.
+This is often used in a situtation where the variable can be changed by something outside the control of the program, such as hardware or different thread.
+
+--> When to use Volatile Keyword:
+-->memorymapped hardware register
+-->Shared variables in multi Threading 
+---> if a variable is shared between ultiple threads, one thread can change the value of the variable while another thread is accessing it.
+--> Interrup Service Routine:
+variables that are modified using Interrup Service Routine can be declared as volatile.
+
+
+
+MEMORY MANAGEMENT IN C :
+
+1. Text Segment:
+Text Segment contains Executable instructions.
+Text Segment is placed below heap/stack such that heap/stack memory dosen't overwrite it .
+
+2. Data Segment (initialized data segment):
+A segment is a (virtual address space) of a program, which contains global variables and local variables that are initialized by programmer.
+
+3. Unintiallized Data Segment: (BLOCK STARTED by SYMBOL):
+Data in this segment (global variable) is initialized by the kernel to arthematic 0 at the end of data segment.
+
+4. STACK FRAME:
+Every function call creates a stack frame. It contains:
+-Return address 
+-arguments 
+-local variable
+-saved registers
+
+-->stack pointer: Points to the top of the stack.
+-->base pointer: Points to the base of the current stack.
+
+5. HEAP: (dynamic memory alloaction   --> brk and sbrk system calls are invoked)
+heap is a segment where normally dynamic memory allocation takes place.
+-->The heap area is managed by malloc, calloc, realloc and free, which may use the brk and sbrk system calls to adjust its size.
+
+
+
+
+GARBAGE COLLECTION IN C:
+Garbage collection in c is not built in but can be implemented using external libraries or tools.
+
+-->Manual Memory MANAGEMENT in C:
+
+1. Malloc:
+Memory allocation is used to allocate a specified number of bytes of memory. It returns a pointer to beginning of the allocated memory block.
+The memory block contains uninstiallized data.
+example:
+
+int *ptr = (int*) malloc(5 * sizeof(int))
+ ___________________________________________________
+|___________________________________________________|   -->A large 20 bytes memory block is dynamically allocated to ptr.
+------------------20 bytes--------------------------
+
+ptr = [][][][][][][]......
+While allocating memory if the space is less it returns a NULL pointer.
+
+
+2. Calloac:
+Calloc or contiguous memory allocation method in c is used to dynamically alloacte specified number of blocks of memory of specified type.
+It has 2 differences compared to malloc:
+-->It initializes each block with a default value 0.
+-->It has 2 parameters as compared to malloc.
+example:
+
+int *ptr = (int*)calloc(5, sizeof(int))
+ ______________________________________________
+|______|_________|_________|_________|_________|        --> 5 blocks of 4 bytes each is dynamically allocated to ptr
+-4bytes- 
+---------------------20bytes--------------------
+
+ptr = [0][0][0][0].......
+
+
+3. Realloc:
+Reallocation of memory maintains the already allocated block values and new blocks will be initialized with default garbage values.
+
+
+4. Free:
+This is used to deallocate the block which are previously allocated using malloc or calloc.
+
+-->AUTOMATIC MEMORY MANAGEMENT IS POSSIBLE USING GARBAGE COLLECTION LIBRARIES:
+1. Bohem-demers-Weiser Garbage Collector (BDWGC) #include<gc.h>
+2. Haskell GHC Garbage Collector
+
+NOTE:
+SBRK AND BRK SYSTEM CALLS ARE USED TO MANAGE HEAP MEMORY DYNAMICALLY.
+
+
+
+PASSING PARAMETERS TO A FUNCTION:
+
+ 
+1. Call by Value:
+In Call By Value the copy of the value is passed to the function so any changes make to the value inside that function doen't reflects to the actual/original values.
+--> Formal Parameters are the variable which are passed to the function during function defination.
+--> Actual Parameters are the variables which are passed to the function during function Call.
+
+example:
+#include<stdio.h>
+void swap(int a, int b) // FORMAL PARAMETERS
+{
+    int temp = a;
+    a = b;
+    b = temp;
+}
+int main()
+{
+    int x = 10, y = 20;
+    printf("Before x: %d, y: %d",x,y);
+    swap(x,y); //ACTUAL PARAMETERS
+    printf("After x: %d, y: %d",x,y);
+    return 0;
+}
+
+
+2. Call by Reference:
+In a call by Reference, the address of the arguments is passed to the function, and changes that are made to the function are reflected back to the values.
+We use the pointers of the required type to receive the address in the function.
+
+example:
+#include<stdio.h>
+void swap(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+int main()
+{
+    int x = 10; y = 20;
+    printf("Before x: %d, y: %d",x,y)
+    swap(x,y);
+    printf("After x: %d, y: %d",x,y)
+}
+
+
+
+POINTERS:
+
+1. Wild Pointer:
+A pointer that has not been initialized to anything (not even NULL) is known as a wild pointer. The pointer may be initialized to a non-NULL garbage value that may not be a valid address. 
+
+2. Dangling Pointer:
+A pointer pointing to a memory location that has been deleted (or freed) is called a dangling pointer. Such a situation can lead to unexpected behavior in the program and also serve as a source of bugs in C programs.
+
+3. Void Pointer:
+Void pointer is a specific pointer type – void * – a pointer that points to some data location in storage, which doesn’t have any specific type. Void refers to the type. Basically, the type of data that it points to can be any. Any pointer type is convertible to a void pointer hence it can point to any value. 
+
+4.Null Pointer:
+NULL Pointer is a pointer that is pointing to nothing(i.e. not pointing to any valid object or memory location). In case, if we don’t have an address to be assigned to a pointer, then we can simply use NULL. NULL is used to represent that there is no valid memory address.
+
+
+code1:
+typedef struct s_fat_boy
+{
+    char v[50];
+} t_fat_boy;
+
+void initialize(t_fat_boy fat_boy)
+{
+    fat_boy.v[2] = 42;
+}
+
+-->In code1, the initialize function takes a t_fat_boy structure by value. This means that when you call the function, a copy of the structure is made and passed to the function. Any modifications made to fat_boy within the function will only affect the copy and not the original structure.
+-->Disadvantage: Inefficiency
+
+code2:
+typedef struct s_fat_boy
+{
+    char v[50];
+} t_fat_boy;
+
+void initialize(t_fat_boy *fat_boy)
+{
+    fat_boy->v[2] = 42;
+}
+
+-->In code2, the initialize function takes a pointer to a t_fat_boy structure. This means that when you call the function, a pointer to the original structure is passed. Any modifications made to the structure via the pointer will affect the original structure.
+-->Advantage: Changes made to the structure via the pointer will affect the original structure, which is often the desired behavior.
+
+
+NOTE:
+-Using direct access creates a copy of entire structure, this can be inefficient so we use pointers.
+-Pointers are of different types but 
+
+
+explicit type casting : *(int*)data
+
+#include<stdio.h>
+void printData(void *data, char datatype)
+{
+    if(datatype == 'i')
+    {
+        printf("Integer:%d\n", *(int*)data);
+    }
+    else if(datatype == 'f')
+    {
+        printf("Float: %E\n", *(float*)data);
+    }
+    else if(datatype == 'c')
+    {
+        printf("charecter: %c\n", *(char*)data);
+    }
+    else
+    {
+        printf("Unknown Datatype");
+    }
+}
+int main()
+{
+    int intValue = 65;
+
+    printData(&intValue,'i');
+    printData(&intValue,'f');
+    printData(&intValue,'c');
+}
+
+Pointer to the First Element of an Array
+When you declare a pointer to the first element of an array, you are dealing with a pointer that points to a single element (usually the first element) of the array.
+
+Pointer to the Entire Array
+A pointer to the entire array is declared using different syntax and has a different type. It points to the whole array, not just the first element.
+
+#include <stdio.h>
+
+int main() {
+    int arr[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    
+    int *p = arr;       // Pointer to the first element
+    int (*ptr)[10] = &arr; // Pointer to the entire array
+    
+    printf("Using p (pointer to first element):\n");
+    for (int i = 0; i < 10; ++i) {
+        printf("%d ", *(p + i));
+    }
+    printf("\n");
+    
+    printf("Using ptr (pointer to entire array):\n");
+    for (int i = 0; i < 10; ++i) {
+        printf("%d ", (*ptr)[i]);
+    }
+    printf("\n");
+    
+    return 0;
+}
+
+
+Suppose arr is a 2-D array, we can access any element arr[i][j] of the array using the pointer expression *(*(arr + i) + j).
+
+
+Function Pointer:
+
+// Function pointer declaration
+return_type (*pointer_name)(parameter_types);
+
+example: 
+
+#include <stdio.h>
+
+// Function prototypes
+int add(int a, int b);
+int subtract(int a, int b);
+int multiply(int a, int b);
+int divide(int a, int b);
+
+int main() {
+    // Function pointer declaration
+    int (*operation)(int, int);
+    
+    // Assign the add function to the pointer
+    operation = &add;
+    printf("Addition: %d\n", operation(10, 5));
+    
+    // Assign the subtract function to the pointer
+    operation = &subtract;
+    printf("Subtraction: %d\n", operation(10, 5));
+    
+    // Assign the multiply function to the pointer
+    operation = &multiply;
+    printf("Multiplication: %d\n", operation(10, 5));
+    
+    // Assign the divide function to the pointer
+    operation = &divide;
+    printf("Division: %d\n", operation(10, 5));
+
+    return 0;
+}
+
+// Function definitions
+int add(int a, int b) {
+    return a + b;
+}
+
+int subtract(int a, int b) {
+    return a - b;
+}
+
+int multiply(int a, int b) {
+    return a * b;
+}
+
+int divide(int a, int b) {
+    return a / b;
+}
+
+
+Following are some interesting facts about function pointers.
+ 
+1) Unlike normal pointers, a function pointer points to code, not data. Typically a function pointer stores the start of executable code.
+
+2) Unlike normal pointers, we do not allocate de-allocate memory using function pointers.
+
+ 
+3) A function’s name can also be used to get functions’ address. For example, in the below program, we have removed address operator ‘&’ in assignment. We have also changed function call by removing *, the program still works.
+
+
+
+BIT MANIPULATION:
+
+setBit --> num | (1 << bit);
+
+tooglebit --> num ^ (1 << bit);
+
+clearBit --> num & ~(1 << bit);
+
+checkBit --> (num & (1 << bit)) != 0;
+
